@@ -4,40 +4,37 @@ import (
 	"context"
 	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"go.uber.org/zap"
 )
 
-type Pgx struct {
-	pool   *pgxpool.Pool
-	logger *zap.Logger
+type PgxPool struct {
+	Pool *pgxpool.Pool
 }
 
 func NewPGX(
 	host, port, sslMode, user, password, name string,
 	maxConns int32,
-	logger *zap.Logger,
-) (*Pgx, error) {
+) (*PgxPool, error) {
 	config, err := pgxpool.ParseConfig(buildPostgresDns(host, port, sslMode, user, password, name))
 	if err != nil {
 		return nil, err
 	}
 	config.MaxConns = maxConns
 
-	db, err := pgxpool.NewWithConfig(context.Background(), config)
+	pool, err := pgxpool.NewWithConfig(context.Background(), config)
 	if err != nil {
 		return nil, err
 	}
-	if err = db.Ping(context.Background()); err != nil {
+	if err = pool.Ping(context.Background()); err != nil {
 		return nil, err
 	}
 
-	return &Pgx{db, logger}, nil
+	return &PgxPool{pool}, nil
 }
 
-func (p *Pgx) Close(ctx context.Context) error {
+func Close(ctx context.Context, pool *pgxpool.Pool) error {
 	done := make(chan struct{}, 1)
 	go func() {
-		p.pool.Close()
+		pool.Close()
 		done <- struct{}{}
 	}()
 
