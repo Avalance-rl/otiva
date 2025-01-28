@@ -1,10 +1,11 @@
 package logger
 
 import (
+	"os"
+
 	"go.elastic.co/ecszap"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"os"
 )
 
 type Logger struct {
