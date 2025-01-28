@@ -13,3 +13,6 @@
 [submodule "services/order"]
 	path = services/order
 	url = https://github.com/Avalance-rl/order.git
+[submodule "services/api-gateway"]
+	path = services/api-gateway
+	url = https://github.com/Avalance-rl/api-gateway.git
